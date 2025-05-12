@@ -3,3 +3,6 @@ notes/
 
 # VSCode settings
 .vscode/
+
+# Logs
+logs/
