@@ -1,16 +1,18 @@
 import logging
 import requests
+from typing import List, Dict, Any, Optional
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+
+from nexusforge_core.logging_config import configure_logging, get_logger
+from nexusforge_core.models import Message, ChatRequest, ChatResponse
+from nexusforge_core.llm_clients import OllamaClient
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-)
-logger = logging.getLogger("text_to_text_service")
+configure_logging(level=logging.INFO)
+logger = get_logger("text_to_text_service")
 
 app = FastAPI(title="Text-to-Text Service", version="0.1.0")
 
