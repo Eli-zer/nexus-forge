@@ -2,9 +2,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY ./services/text_to_text/requirements.txt .
+COPY ./core /core
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY ./app /app/app
+COPY ./services/text_to_text/app /app/app
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

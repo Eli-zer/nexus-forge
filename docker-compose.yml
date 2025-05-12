@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   ollama:
     image: ollama/ollama:latest
@@ -18,7 +16,9 @@ services:
     restart: unless-stopped
 
   text_to_text:
-    build: ./services/text_to_text
+    build: 
+      context: .
+      dockerfile: ./services/text_to_text/Dockerfile
     ports:
       - "8001:8000"
     depends_on:
