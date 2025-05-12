@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from nexusforge_core.logging_config import configure_logging, get_logger
 from nexusforge_core.models import Message, ChatRequest, ChatResponse
-from nexusforge_core.llm_clients import OllamaClient
+from nexusforge_core.llm_client import OllamaClient
 
 # Configure logging
 configure_logging(level=logging.INFO)
@@ -109,6 +109,18 @@ async def chat(request: ChatRequest):
             status_code=500, detail=f"Error generating response: {str(e)}"
         )
 
+@app.get("/models", response_model=dict)
+async def list_models():
+    """List all available models from Ollama"""
+    try:
+        logger.info("Requesting model list from Ollama")
+        models = ollama_client.list_models()
+        return {"models": models}
+    except Exception as e:
+        logger.error(f"Error listing models from Ollama: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error listing models: {str(e)}")
+
+        
 @app.post("/simple-prompt", response_model=dict)
 async def simple_prompt(prompt: str):
     """Send a simple prompt to Ollama and return the response"""
