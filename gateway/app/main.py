@@ -63,5 +63,32 @@ async def services_health():
             status_code=503, detail=f"Service health check failed: {results}"
         )
 
+@app.get("/api/v1/models")
+async def forward_list_models():
+    """Forward the list models request to the text-to-text service"""
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        try:
+            response = await client.get("http://text_to_text_service:8000/models")
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            logger.error(f"Error forwarding list models request: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error listing models: {str(e)}")
+
+@app.post("/api/v1/simple-prompt")
+async def forward_simple_prompt(prompt: str):
+    """Forward a simple prompt to the text-to-text service"""
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        try:
+            response = await client.post(
+                "http://text_to_text_service:8000/simple-prompt",
+                params={"prompt": prompt}
+            )
+            response.raise_for_status()
+            return response.json()
+        except Exception as e:
+            logger.error(f"Error forwarding simple prompt: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error processing prompt: {str(e)}")
+
 
 # Placeholder for future routes that will be added for text-to-text endpoints
