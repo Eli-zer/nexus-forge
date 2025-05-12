@@ -7,22 +7,20 @@ services:
       - ollama_data:/root/.ollama
     restart: unless-stopped
 
+  text_to_text:
+    build: ./services/text_to_text
+    ports:
+      - "8001:8000"
+    depends_on:
+      - ollama
+    restart: unless-stopped
+
   gateway:
     build: ./gateway
     ports:
       - "8000:8000"
     depends_on:
       - text_to_text
-    restart: unless-stopped
-
-  text_to_text:
-    build: 
-      context: .
-      dockerfile: ./services/text_to_text/Dockerfile
-    ports:
-      - "8001:8000"
-    depends_on:
-      - ollama
     restart: unless-stopped
 
 volumes:
