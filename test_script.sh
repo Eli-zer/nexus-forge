@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to test the basic setup of NexusForge
+# Sanity check script to test the basic setup of NexusForge
 
 echo "Building and starting services..."
 docker compose up -d
