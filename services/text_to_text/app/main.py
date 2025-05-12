@@ -109,6 +109,20 @@ async def chat(request: ChatRequest):
             status_code=500, detail=f"Error generating response: {str(e)}"
         )
 
+@app.post("/simple-prompt", response_model=dict)
+async def simple_prompt(prompt: str):
+    """Send a simple prompt to Ollama and return the response"""
+    try:
+        logger.info(f"Sending simple prompt to Ollama: {prompt}")
+        response = ollama_client.generate(
+            model="tinyllama",  # Using tinyllama as specified in the roadmap
+            prompt=prompt,
+            temperature=0.7
+        )
+        return {"response": response}
+    except Exception as e:
+        logger.error(f"Error sending prompt to Ollama: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error generating response: {str(e)}")
 
 @app.get("/ping", response_model=ServiceResponse)
 async def ping():
