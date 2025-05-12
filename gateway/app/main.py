@@ -63,12 +63,33 @@ async def services_health():
             status_code=503, detail=f"Service health check failed: {results}"
         )
 
+@app.get("/api/v1/ping", response_model=ServiceResponse)
+async def forward_ping():
+    """Forward the ping request to the text-to-text service"""
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        try:
+            # Use the correct service name 'text_to_text'
+            response = await client.get("http://text_to_text:8000/ping")
+            response.raise_for_status()
+            # Return the JSON response from the service
+            return response.json()
+        except httpx.RequestError as e:
+            logger.error(f"Error forwarding ping request: {e.request.url} - {e}")
+            raise HTTPException(status_code=503, detail=f"Text-to-text service unavailable: {str(e)}")
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Error forwarding ping request, status {e.response.status_code}: {e.response.text}")
+            raise HTTPException(status_code=e.response.status_code, detail=e.response.text)
+        except Exception as e:
+            logger.error(f"Unexpected error forwarding ping request: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Internal server error forwarding ping: {str(e)}")
+
+
 @app.get("/api/v1/models")
 async def forward_list_models():
     """Forward the list models request to the text-to-text service"""
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
-            response = await client.get("http://text_to_text_service:8000/models")
+            response = await client.get("http://text_to_text:8000/models")
             response.raise_for_status()
             return response.json()
         except Exception as e:
@@ -81,7 +102,7 @@ async def forward_simple_prompt(prompt: str):
     async with httpx.AsyncClient(timeout=60.0) as client:
         try:
             response = await client.post(
-                "http://text_to_text_service:8000/simple-prompt",
+                "http://text_to_text:8000/simple-prompt",
                 params={"prompt": prompt}
             )
             response.raise_for_status()
