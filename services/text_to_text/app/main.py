@@ -2,13 +2,13 @@ import logging
 import requests
 from typing import List, Dict, Any, Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from nexusforge_core.logging_config import configure_logging, get_logger
-from nexusforge_core.models import Message, ChatRequest, ChatResponse
-from nexusforge_core.llm_client import OllamaClient
+from core.logging_config import configure_logging, get_logger
+from core.models import Message, ChatRequest, ChatResponse
+from core.llm_client import OllamaClient
 
 # Configure logging
 configure_logging(level=logging.INFO)
@@ -25,8 +25,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-OLLAMA_API_URL = "http://ollama:11434/api"
-
+OLLAMA_API_URL = "http://ollama:11434"
+ollama_client = OllamaClient(OLLAMA_API_URL)
 
 class ServiceResponse(BaseModel):
     message: str
@@ -122,14 +122,15 @@ async def list_models():
 
         
 @app.post("/simple-prompt", response_model=dict)
-async def simple_prompt(prompt: str):
+async def simple_prompt(prompt: str = Query(..., description="The prompt to send to Ollama")):
     """Send a simple prompt to Ollama and return the response"""
     try:
         logger.info(f"Sending simple prompt to Ollama: {prompt}")
         response = ollama_client.generate(
-            model="tinyllama",  # Using tinyllama as specified in the roadmap
+            model="tinyllama",  
             prompt=prompt,
-            temperature=0.7
+            temperature=0.7,
+            timeout=150.0,
         )
         return {"response": response}
     except Exception as e:
