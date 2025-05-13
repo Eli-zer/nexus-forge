@@ -3,3 +3,16 @@ notes/
 
 # VSCode settings
 .vscode/
+
+# Logs
+logs/
+
+# db
+.qodo
+
+# env
+.venv/
+
+# cache
+__pycache__/
+*.egg-info/
