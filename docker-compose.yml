@@ -1,6 +1,11 @@
 services:
   ollama:
     image: ollama/ollama:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
     ports:
       - "11434:11434"
     volumes:
