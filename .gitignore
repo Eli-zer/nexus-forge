@@ -6,3 +6,13 @@ notes/
 
 # Logs
 logs/
+
+# db
+.qodo
+
+# env
+.venv/
+
+# cache
+__pycache__/
+*.egg-info/
