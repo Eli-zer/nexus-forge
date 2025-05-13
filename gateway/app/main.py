@@ -99,7 +99,7 @@ async def forward_list_models():
 @app.post("/api/v1/simple-prompt")
 async def forward_simple_prompt(prompt: str):
     """Forward a simple prompt to the text-to-text service"""
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    async with httpx.AsyncClient(timeout=150.0) as client:
         try:
             response = await client.post(
                 "http://text_to_text:8000/simple-prompt",
@@ -110,6 +110,3 @@ async def forward_simple_prompt(prompt: str):
         except Exception as e:
             logger.error(f"Error forwarding simple prompt: {str(e)}")
             raise HTTPException(status_code=500, detail=f"Error processing prompt: {str(e)}")
-
-
-# Placeholder for future routes that will be added for text-to-text endpoints
