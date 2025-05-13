@@ -13,7 +13,8 @@ class OllamaClient:
                  model: str, 
                  prompt: str, 
                  system: Optional[str] = None,
-                 temperature: float = 0.7) -> Dict[Any, Any]:
+                 temperature: float = 0.7,
+                 **payload_params) -> Dict[Any, Any]:
         """
         Generate a response from an Ollama model.
         
@@ -32,6 +33,7 @@ class OllamaClient:
             "model": model,
             "prompt": prompt,
             "temperature": temperature,
+            **payload_params,
         }
         
         if system:
